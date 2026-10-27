@@ -3,17 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>하루 하늘 시계 | 어게인 실험과학 수학학원</title>
-<meta name="description" content="하루 동안 해 · 달 · 별이 움직여 보이는 까닭, 지구의 자전 체험 활동">
+<title>하루 하늘 길 | 어게인 실험과학 수학학원</title>
+<meta name="description" content="하루 동안 해와 별이 하늘의 어느 쪽을 지나가는지 알아보는 터치 활동">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --main:#2c4a8a; --main-dark:#1d2f5e; --main-shadow:#16244a; --soft:#eaf1fb; --soft-line:#b5c9ea;
-  --night:#14204a; --dawn:#f39c4a; --dawn-soft:#fff3e6; --dawn-line:#f6c999;
-  --sky:#4aa3df; --sky-soft:#e8f4fc; --sky-line:#a9d6f2;
-  --moon:#f7e08a; --moon-soft:#fffbea; --moon-line:#f3df8f;
+  --night:#14204a; --dawn:#f39c4a; --sky:#4aa3df; --sky-soft:#e8f4fc; --sky-line:#a9d6f2;
+  --sun:#ffc83d; --sun-soft:#fffbea; --sun-line:#f3df8f;
   --ink:#2b3242; --sub:#6b7385; --line:#e3e8f0; --bg:#ffffff;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -55,7 +54,6 @@ main{max-width:1100px;margin:0 auto;padding:16px;width:100%}
 .row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .stage{background:#fff;border:3px solid var(--line);border-radius:24px;padding:8px;text-align:center;overflow:hidden}
 .stage svg{display:block;margin:0 auto;width:100%;height:auto;border-radius:16px}
-.stage h3{margin:2px 0 6px;font-weight:700;font-size:20px;color:var(--main-dark)}
 
 /* 슬라이더 */
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:60px;background:none;margin:2px 0;touch-action:none}
@@ -63,31 +61,40 @@ input[type=range]::-webkit-slider-runnable-track{height:16px;border-radius:99px;
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:54px;height:54px;margin-top:-19px;border-radius:50%;background:#fff;border:7px solid var(--main);box-shadow:0 3px 6px rgba(0,0,0,.25)}
 input[type=range]::-moz-range-track{height:16px;border-radius:99px;background:var(--track)}
 input[type=range]::-moz-range-thumb{width:40px;height:40px;border-radius:50%;background:#fff;border:7px solid var(--main)}
-#time{--track:linear-gradient(90deg,#3a4a85 0%,#f39c4a 4.5%,#6fbdf0 11%,#6fbdf0 42%,#f39c4a 48.6%,#1d2b53 54%,#14204a 90%,#3a4a85 100%)}
-#speed{--track:linear-gradient(90deg,#cfe0f5,#2c4a8a)}
+#t0{--track:linear-gradient(90deg,#3a4a85 0%,#f39c4a 8%,#6fbdf0 22%,#6fbdf0 82%,#f39c4a 93%,#3a4a85 100%)}
+#t1{--track:linear-gradient(90deg,#6fbdf0 0%,#f39c4a 22%,#1d2b53 34%,#14204a 76%,#f39c4a 84%,#6fbdf0 100%)}
 
-/* 1. 남쪽 하늘 */
-#skySvg{max-height:min(520px,58vh)}
+.skysvg{max-height:min(520px,58vh)}
 .timebox{margin-top:12px;background:var(--sky-soft);border:3px solid var(--sky-line);border-radius:24px;padding:10px 18px 6px}
 .timebox .now{font-weight:900;font-size:clamp(24px,3.4vw,32px);color:var(--main-dark);text-align:center}
+.timebox .info{font-weight:700;font-size:clamp(16px,2vw,19px);color:var(--sub);text-align:center}
 .ticks{display:flex;justify-content:space-between;font-weight:700;font-size:17px;color:var(--sub)}
-.chips{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
-.chips span{font-weight:700;font-size:16px;text-align:center;padding:8px 2px;border-radius:14px;background:#f2f4f8;color:#a7adba;word-break:keep-all;line-height:1.3}
-.chips span.on{background:var(--moon-soft);color:#8a6500;box-shadow:inset 0 0 0 2px var(--moon-line);animation:pop .4s}
+.ticks.abs{position:relative;height:26px;display:block}
+.ticks.abs span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ticks.abs span:first-child{transform:none}.ticks.abs span:last-child{transform:translateX(-100%)}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.chips span{font-weight:700;font-size:17px;text-align:center;padding:10px 2px;border-radius:14px;background:#f2f4f8;color:#a7adba;word-break:keep-all;line-height:1.3}
+.chips span.on{background:var(--sun-soft);color:#8a6500;box-shadow:inset 0 0 0 2px var(--sun-line);animation:pop .4s}
 
-/* 2. 내가 돌면 */
-.t2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:14px}
+/* 별의 길 표 */
+.tbl{width:100%;max-width:760px;margin:12px auto 0;border-collapse:separate;border-spacing:0 6px;font-weight:700;font-size:clamp(15px,2vw,19px);text-align:center}
+.tbl th{color:var(--sub);font-size:.9em;padding:0 4px}
+.tbl td{background:#f2f4f8;color:#b5bac6;padding:8px 4px}
+.tbl td:first-child{border-radius:14px 0 0 14px}.tbl td:last-child{border-radius:0 14px 14px 0}
+.tbl tr.on td{background:var(--soft);color:var(--ink);animation:pop .35s}
+.tbl small{font-size:.8em;color:var(--sub)}
+.tbl .w{color:#5a6fb0}.tbl .r{color:#d8483a}
 
-/* 3. 지구 위에서 */
-.t3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:14px}
-.tog{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f2f4f8;border-radius:999px;padding:5px;max-width:520px;margin:12px auto 0}
-.tog button{min-height:64px;border-radius:999px;font-weight:700;font-size:clamp(17px,2.2vw,21px);color:var(--sub);word-break:keep-all}
-.tog button.on{background:var(--main);color:#fff}
-.speedbox{flex:1;min-width:240px;max-width:420px;background:var(--sky-soft);border:3px solid var(--sky-line);border-radius:24px;padding:8px 18px 4px}
-.speedbox .h{font-weight:700;font-size:19px;color:var(--main-dark)}
-.clockline{font-weight:900;font-size:22px;color:var(--main-dark);text-align:center;margin-top:6px}
+/* 투명 반구 */
+#domeSvg{max-height:min(560px,62vh);touch-action:none}
+.tbtns{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.tbtns button{position:relative;min-height:72px;border-radius:18px;background:#f2f4f8;font-weight:700;font-size:clamp(18px,2.4vw,22px);border:3px solid transparent}
+.tbtns button.on{background:var(--sun-soft);border-color:#f0b62e;color:#8a6500}
+.tbtns button.ok::after{content:'✓';position:absolute;top:-8px;right:-4px;width:24px;height:24px;border-radius:50%;background:var(--dawn);color:#fff;font-size:14px;line-height:24px}
+.tcard{margin-top:10px;background:var(--sun-soft);border:3px solid var(--sun-line);border-radius:20px;padding:10px 14px;font-weight:700;font-size:clamp(17px,2.2vw,21px);text-align:center;word-break:keep-all;line-height:1.45}
+.tcard small{display:block;color:var(--sub);font-size:.8em}
 
-/* 4. OX 퀴즈 */
+/* OX 퀴즈 */
 .quiz{max-width:760px;margin:0 auto;text-align:center}
 .qtop{display:flex;justify-content:space-between;font-weight:700;font-size:21px;color:var(--sub)}
 .qtop b{color:var(--main);font-weight:700}
@@ -112,9 +119,6 @@ footer{margin-top:24px;background:var(--night);color:#fff;text-align:center;padd
 @keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-@media (max-width:860px){
-  .t2,.t3{grid-template-columns:1fr}
-}
 @media (max-width:560px){
   nav{grid-template-columns:repeat(2,1fr)}
   .tab{font-size:17px;min-height:64px}
@@ -122,10 +126,12 @@ footer{margin-top:24px;background:var(--night);color:#fff;text-align:center;padd
   .share span{display:none}
   .logo{width:44px;height:44px}
   .titles .brand{font-size:13px}
-  .chips{grid-template-columns:repeat(3,1fr)}
   .ticks{font-size:14px}
+  .tbtns{grid-template-columns:repeat(3,1fr)}
+  .ticks .mh{display:none}
   .big-btn{font-size:19px;padding:10px 20px;min-height:68px}
   .ox button{min-height:100px}
+  .timebox{padding:8px 12px 4px}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
@@ -134,11 +140,11 @@ footer{margin-top:24px;background:var(--night);color:#fff;text-align:center;padd
 <header>
   <div class="head-in">
     <div class="logo" aria-hidden="true">
-      <svg width="34" height="34" viewBox="0 0 34 34"><circle cx="13" cy="15" r="7" fill="#f7b84a"/><path d="M24 8a8 8 0 1 0 6 13 7 7 0 0 1-6-13z" fill="#f7e08a"/><circle cx="26" cy="27" r="1.4" fill="#fff"/><circle cx="7" cy="27" r="1" fill="#fff"/></svg>
+      <svg width="34" height="34" viewBox="0 0 34 34"><path d="M3 28 Q17 4 31 28" fill="none" stroke="#9fb8ff" stroke-width="2" stroke-dasharray="2 3"/><circle cx="17" cy="13" r="6.5" fill="#ffc83d"/><path d="M7 7l1 2.2 2.2 1-2.2 1L7 13.4l-1-2.2-2.2-1 2.2-1z" fill="#fff"/></svg>
     </div>
     <div class="titles">
       <div class="brand">어게인 실험과학 수학학원</div>
-      <h1>하루 하늘 시계</h1>
+      <h1>하루 하늘 길</h1>
     </div>
     <button class="share" id="share" aria-label="공유하기">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
@@ -148,94 +154,52 @@ footer{margin-top:24px;background:var(--night);color:#fff;text-align:center;padd
 </header>
 
 <nav id="tabs">
-  <button class="tab on" data-t="0">남쪽 하늘<span class="star">✓</span></button>
-  <button class="tab" data-t="1">내가 돌면<span class="star">✓</span></button>
-  <button class="tab" data-t="2">지구 위에서<span class="star">✓</span></button>
+  <button class="tab on" data-t="0">해의 길<span class="star">✓</span></button>
+  <button class="tab" data-t="1">별의 길<span class="star">✓</span></button>
+  <button class="tab" data-t="2">투명 반구<span class="star">✓</span></button>
   <button class="tab" data-t="3">OX 퀴즈<span class="star">✓</span></button>
 </nav>
 
 <main>
-  <!-- 1. 남쪽 하늘 -->
+  <!-- 1. 해의 길 -->
   <section class="panel on" id="p0">
-    <div class="guide"><span class="q">해 보기</span>남쪽을 보고 서 있어요. 시간 막대를 밀어 하루를 보내 보세요</div>
-    <div class="stage">
-      <svg id="skySvg" viewBox="0 0 800 440" aria-label="남쪽 하늘">
-        <defs>
-          <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop id="sk0" offset="0"/><stop id="sk1" offset="1"/></linearGradient>
-          <radialGradient id="sunG"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd25a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd25a" stop-opacity="0"/></radialGradient>
-          <radialGradient id="moonG"><stop offset="0" stop-color="#fff8d6" stop-opacity=".7"/><stop offset="1" stop-color="#fff8d6" stop-opacity="0"/></radialGradient>
-        </defs>
-        <rect width="800" height="345" fill="url(#skyG)"/>
-        <g id="bgStars"></g>
-        <path d="M40 340 A360 250 0 0 1 760 340" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 10" opacity=".35"/>
-        <g id="cons1"></g>
-        <g id="ghost1" opacity="0"></g>
-        <g id="moon1"><circle r="46" fill="url(#moonG)"/><circle r="20" fill="#f7e08a" stroke="#e8cb5e" stroke-width="2"/><circle cx="-6" cy="-5" r="4" fill="#e9cf6d"/><circle cx="7" cy="5" r="3" fill="#e9cf6d"/></g>
-        <g id="sun1"><circle r="62" fill="url(#sunG)"/><circle r="24" fill="#ffc83d" stroke="#f5a623" stroke-width="3"/></g>
-        <g id="noon1" opacity="0">
-          <line id="noonLine" x1="400" x2="400" y1="130" y2="340" stroke="#fff" stroke-width="3" stroke-dasharray="6 7"/>
-          <rect id="noonBox" x="356" y="16" width="88" height="40" rx="20" fill="#fff"/>
-          <text id="noonTxt" x="400" y="45" text-anchor="middle" font-size="26" fill="#d9771a">남중</text>
-        </g>
-        <g id="town1"></g>
-        <text x="40" y="408" text-anchor="middle" font-size="40" fill="#fff">동</text>
-        <text x="400" y="408" text-anchor="middle" font-size="40" fill="#fff">남</text>
-        <text x="760" y="408" text-anchor="middle" font-size="40" fill="#fff">서</text>
-        <text x="400" y="432" text-anchor="middle" font-size="17" fill="#fff" opacity=".8">▼ 나는 여기서 남쪽을 봐요</text>
-        <g id="ghostTxt" opacity="0"><rect id="gtBox" height="44" rx="22" fill="#fff" opacity=".92"/><text id="gtTxt" font-size="24" text-anchor="middle" fill="#2c4a8a">별은 그대로 있어요 · 햇빛 때문에 안 보여요</text></g>
-      </svg>
-    </div>
+    <div class="guide"><span class="q">해 보기</span>파주에서 남쪽 하늘을 봐요 (10월 말). 시간 막대를 밀어 해를 따라가 보세요</div>
+    <div class="stage"><svg id="daySvg" class="skysvg" viewBox="0 0 800 440" aria-label="남쪽 하늘의 해"></svg></div>
     <div class="timebox">
-      <div class="now" id="now">오전 6시 00분</div>
-      <input type="range" id="time" min="360" max="1800" step="5" value="360" aria-label="시각">
-      <div class="ticks"><span>6시</span><span>12시</span><span>18시</span><span>24시</span><span>6시</span></div>
+      <div class="now" id="now0">오전 6시 00분</div>
+      <div class="info" id="info0"></div>
+      <input type="range" id="t0" min="360" max="1080" step="2" value="360" aria-label="시각">
+      <div class="ticks"><span>6시</span><span>9시</span><span>12시</span><span>15시</span><span>18시</span></div>
     </div>
-    <div class="chips">
-      <span data-c="rise">해가 떠요</span><span data-c="noon">해의 남중</span><span data-c="set">해가 져요</span><span data-c="moon">달의 남중</span><span data-c="ghost">낮의 별</span>
-    </div>
-    <div class="msg" id="m0">지금은 새벽 6시예요. 서쪽 하늘에 별자리가 보여요.<br><small>시간 막대를 오른쪽으로 밀어 보세요</small></div>
+    <div class="chips" id="chips0"><span data-c="rise">해돋이</span><span data-c="noon">남중</span><span data-c="set">해넘이</span></div>
+    <div class="msg" id="m0"></div>
   </section>
 
-  <!-- 2. 내가 돌면 -->
+  <!-- 2. 별의 길 -->
   <section class="panel" id="p1">
-    <div class="guide"><span class="q">해 보기</span>깜깜한 방, 별 영사기가 벽에 별자리를 비춰요. 의자에 앉아 돌아 볼까요?</div>
-    <div class="t2">
-      <div class="stage">
-        <h3>위에서 본 방</h3>
-        <svg id="roomSvg" viewBox="0 0 360 360" aria-label="위에서 본 방"></svg>
-      </div>
-      <div class="stage">
-        <h3>내 눈에 보이는 모습</h3>
-        <svg id="eyeSvg" viewBox="0 0 400 260" aria-label="내 눈에 보이는 모습"></svg>
-      </div>
+    <div class="guide"><span class="q">해 보기</span>7월 1일 밤, 파주의 남쪽 하늘이에요. 두 별을 따라가 보세요</div>
+    <div class="stage"><svg id="nightSvg" class="skysvg" viewBox="0 0 800 440" aria-label="남쪽 하늘의 별"></svg></div>
+    <div class="timebox">
+      <div class="now" id="now1"></div>
+      <input type="range" id="t1" min="1050" max="1980" step="5" value="1050" aria-label="시각">
+      <div class="ticks abs" id="ticks1"></div>
     </div>
-    <div class="row">
-      <button class="big-btn" id="spinL">↺ 왼쪽으로 돌기</button>
-      <button class="big-btn alt" id="still">✋ 가만히</button>
-    </div>
-    <div class="msg" id="m1">별 영사기는 책상 위에 꼭 붙어 있어요.<br><small><b>왼쪽으로 돌기</b>를 눌러 보세요</small></div>
+    <div class="row"><button class="big-btn alt" id="air">대기 끄기</button></div>
+    <table class="tbl" id="tbl">
+      <thead><tr><th>시각</th><th class="w">알타이르 방위</th><th class="w">높이</th><th class="r">안타레스 방위</th><th class="r">높이</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="msg" id="m1"></div>
   </section>
 
-  <!-- 3. 지구 위에서 -->
+  <!-- 3. 투명 반구 -->
   <section class="panel" id="p2">
-    <div class="guide"><span class="q">해 보기</span>북극 위에서 지구를 내려다봐요. 우리나라에 선 친구에게는 하늘이 어떻게 보일까요?</div>
-    <div class="t3">
-      <div class="stage">
-        <h3>북극 위에서 본 지구</h3>
-        <svg id="earthSvg" viewBox="0 0 400 400" aria-label="북극 위에서 본 지구"></svg>
-      </div>
-      <div class="stage">
-        <h3>친구가 보는 남쪽 하늘</h3>
-        <svg id="viewSvg" viewBox="0 0 400 260" aria-label="친구가 보는 남쪽 하늘"></svg>
-        <div class="clockline" id="clock3">오전 6시</div>
-      </div>
-    </div>
-    <div class="tog" id="mode"><button data-m="earth" class="on">🌏 지구가 돈다</button><button data-m="sky">✨ 하늘이 돈다</button></div>
-    <div class="row">
-      <button class="big-btn" id="play">▶ 돌리기</button>
-      <div class="speedbox"><div class="h">빠르기</div><input type="range" id="speed" min="1" max="5" step="1" value="2" aria-label="빠르기"></div>
-    </div>
-    <div class="msg" id="m2"><b>▶ 돌리기</b>를 눌러 지구를 돌려 보세요.<br><small>지구는 북극 위에서 볼 때 시계 반대 방향(서쪽 → 동쪽)으로 돌아요</small></div>
+    <div class="guide"><span class="q">해 보기</span>시각을 고르고, 노란 스티커를 끌어 투명 반구에 붙여요</div>
+    <div class="stage"><svg id="domeSvg" viewBox="0 0 600 350" aria-label="투명 반구 모형"></svg></div>
+    <div class="tbtns" id="tbtns"></div>
+    <div class="tcard" id="tcard">먼저 <b>시각</b> 단추를 골라요</div>
+    <div class="row"><button class="big-btn off" id="starBtn">⭐ 별 스티커</button></div>
+    <div class="msg" id="m2">시각 단추를 누르면 그때의 해 방위와 높이가 나와요.<br><small>노란 스티커를 끌면 높이 자가 따라와요</small></div>
   </section>
 
   <!-- 4. OX 퀴즈 -->
@@ -254,9 +218,9 @@ footer{margin-top:24px;background:var(--night);color:#fff;text-align:center;padd
 
 <div class="finale" id="finale" hidden>
   <div class="finale-card">
-    <svg width="72" height="72" viewBox="0 0 34 34"><circle cx="13" cy="15" r="7" fill="#f7b84a"/><path d="M24 8a8 8 0 1 0 6 13 7 7 0 0 1-6-13z" fill="#f7e08a"/></svg>
-    <h2>완성!<br>하루 하늘의 비밀을 찾았어요</h2>
-    <div class="path">해 · 달 · 별은 동쪽 → 남쪽 → 서쪽<br>까닭은 서쪽 → 동쪽으로 도는 지구의 자전</div>
+    <svg width="72" height="72" viewBox="0 0 34 34"><path d="M3 28 Q17 4 31 28" fill="none" stroke="#2c4a8a" stroke-width="2" stroke-dasharray="2 3"/><circle cx="17" cy="13" r="6.5" fill="#ffc83d"/></svg>
+    <h2>완성!<br>하루 하늘 길을 찾았어요</h2>
+    <div class="path">해와 별은 모두 동쪽 → 남쪽 → 서쪽<br>해는 한낮에도 머리 바로 위까지 오지 않아요</div>
     <button class="big-btn" id="finaleClose">닫기</button>
   </div>
 </div>
@@ -266,10 +230,8 @@ footer{margin-top:24px;background:var(--night);color:#fff;text-align:center;padd
 <script>
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const NS = 'http://www.w3.org/2000/svg';
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-const rad = d => d * Math.PI / 180;
-const norm = d => ((d % 360) + 540) % 360 - 180;   // -180 ~ 180
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
 
 /* ---------- 소리 ---------- */
 let ac;
@@ -335,7 +297,7 @@ $('#finaleClose').onclick = () => { $('#finale').hidden = true; sfx.pop(); };
 
 $('#share').onclick = async () => {
   const url = location.href;
-  if (navigator.share) { try { await navigator.share({ title: '하루 하늘 시계', text: '어게인 실험과학 수학학원 · 하루 하늘 시계', url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  if (navigator.share) { try { await navigator.share({ title: '하루 하늘 길', text: '어게인 실험과학 수학학원 · 하루 하늘 길', url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(url); }
   catch (e) { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
   toast('주소가 복사됐어요');
@@ -347,8 +309,27 @@ $$('.tab').forEach(t => t.onclick = () => {
   sfx.pop();
 });
 
+/* ---------- 하늘 위치 계산 (파주 북위 37.76°) ---------- */
+const LAT = rad(37.76);
+// tr = 남중 시각(분), dec = 적위, rate = 1시간에 도는 각도
+function skyPos(t, tr, dec, rate) {
+  const H = rad((t - tr) / 60 * rate), d = rad(dec);
+  const alt = deg(Math.asin(Math.sin(LAT) * Math.sin(d) + Math.cos(LAT) * Math.cos(d) * Math.cos(H)));
+  const az = (deg(Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(LAT) - Math.tan(d) * Math.cos(LAT))) + 540) % 360;
+  return [az, alt];
+}
+const SUN = t => skyPos(t, 736, -13, 15);            // 10월 말 : 6시 55분 뜸 · 12시 16분 남중 39° · 17시 40분 짐
+const SUNJ = t => skyPos(t, 757, 23.1, 15);          // 7월 1일 해 (하늘 밝기만 계산)
+const ALT = t => skyPos(t, 1546, 8.87, 15.041);      // 알타이르 : 19시 17분 뜸 · 1시 46분 남중 61° · 8시 16분 짐
+const ANT = t => skyPos(t, 1345, -26.43, 15.041);    // 안타레스 : 17시 54분 뜸 · 22시 25분 남중 26° · 2시 58분 짐
+const UP = -0.6;                                      // 이 높이보다 위면 지평선 위
+const DIRS = ['북', '북북동', '북동', '동북동', '동', '동남동', '남동', '남남동', '남', '남남서', '남서', '서남서', '서', '서북서', '북서', '북북서'];
+const dirName = az => DIRS[Math.round(az / 22.5) % 16];
+
+/* 남쪽 하늘 그림 : 왼쪽 = 동, 가운데 = 남, 오른쪽 = 서 */
+const SX = az => 400 + (az - 180) * 3.6, SY = alt => 340 - alt * 3.4;
+
 /* ---------- 하늘 색 ---------- */
-// h = 해의 높이 (-1 한밤 ~ 0 지평선 ~ 1 머리 위)
 const SKY = [[-1, '#0b1433', '#1a2650'], [-.35, '#0f1b40', '#25336a'], [-.12, '#2d3f7c', '#f39c4a'], [.05, '#5d9fd8', '#ffc98a'], [.3, '#3f97d9', '#bfe4fa'], [1, '#2f86cf', '#a9dcf7']];
 const hx = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
 const mix = (a, b, t) => '#' + hx(a).map((v, i) => Math.round(v + (hx(b)[i] - v) * t).toString(16).padStart(2, '0')).join('');
@@ -359,38 +340,15 @@ function skyAt(h) {
   }
   return [SKY[5][1], SKY[5][2]];
 }
-const nightOf = h => clamp((-h - .05) / .3);   // 별이 보이는 정도
+const nightOf = h => clamp((-h - .05) / .3);
 
-/* ---------- 황소자리 (알데바란 + 좀생이별) ---------- */
-const TAU = { g: [0, 0], d: [-14, -10], e: [-28, -18], b: [-72, -46], t: [-12, 4], a: [-27, 9], z: [-68, 24], l: [20, 10] };
-const PLE = [[0, 0], [6, -3], [10, 2], [4, 5], [-5, 3], [13, -4]].map(([x, y]) => [x + 40, y - 34]);
-const LINES = [['g', 'd'], ['d', 'e'], ['e', 'b'], ['g', 't'], ['t', 'a'], ['a', 'z'], ['g', 'l']];
-function taurus(s, { labels = true, ghost = false } = {}) {
-  const P = k => TAU[k].map((v, i) => (v + (i ? 5 : 15)) * s);
-  const Q = ([x, y]) => [(x + 15) * s, (y + 5) * s];
-  const col = ghost ? '#2c4a8a' : '#9fb8ff';
-  let o = LINES.map(([a, b]) => `<line x1="${P(a)[0]}" y1="${P(a)[1]}" x2="${P(b)[0]}" y2="${P(b)[1]}" stroke="${col}" stroke-width="${ghost ? 3.5 : 1.8}" ${ghost ? 'stroke-dasharray="5 6"' : 'opacity=".75"'}/>`).join('');
-  for (const k in TAU) {
-    const [x, y] = P(k), r = (k === 'a' ? 5 : 3) * Math.max(.8, s);
-    o += ghost ? `<circle cx="${x}" cy="${y}" r="${r + 1}" fill="none" stroke="#2c4a8a" stroke-width="2" stroke-dasharray="3 3"/>`
-               : `<circle cx="${x}" cy="${y}" r="${r}" fill="${k === 'a' ? '#ffb070' : '#fff'}"/>`;
-  }
-  PLE.forEach(p => { const [x, y] = Q(p); o += ghost ? `<circle cx="${x}" cy="${y}" r="2.6" fill="none" stroke="#2c4a8a" stroke-width="1.6" stroke-dasharray="2 2"/>` : `<circle cx="${x}" cy="${y}" r="${2.2 * Math.max(.8, s)}" fill="#dfe8ff"/>`; });
-  if (labels && !ghost) {
-    const fs = 13 * Math.max(1, s * .8), [ax, ay] = P('a'), [px, py] = Q([45, -34]);
-    o += `<text x="${ax}" y="${ay + fs + 6}" font-size="${fs}" fill="#ffd2a8" text-anchor="middle">알데바란</text>`;
-    o += `<text x="${px}" y="${py - 12}" font-size="${fs}" fill="#dfe8ff" text-anchor="middle">좀생이별</text>`;
-    o += `<text x="${P('b')[0]}" y="${P('b')[1] - 10}" font-size="${fs}" fill="#9fb8ff">황소자리</text>`;
-  }
-  return o;
-}
 function townSvg(w, y0, sc = 1) {
   const H = [34, 52, 26, 60, 40, 30, 70, 44, 28, 56, 36, 48, 24, 62, 38, 30];
   let o = '', x = 0, i = 0;
   while (x < w) {
     const bw = (34 + (i * 13 % 22)) * sc, bh = H[i % H.length] * sc;
     o += `<rect x="${x}" y="${y0 - bh}" width="${bw + 1}" height="${bh + 2}" fill="#2a3352"/>`;
-    for (let wy = y0 - bh + 8 * sc; wy < y0 - 10 * sc; wy += 14 * sc)
+    for (let wy = y0 - bh + 6 * sc; wy < y0 - 8 * sc; wy += 14 * sc)
       for (let wx = x + 7 * sc; wx < x + bw - 9 * sc; wx += 12 * sc)
         if ((wx * 7 + wy * 3 + i) % 5 < 2) o += `<rect class="win" x="${wx}" y="${wy}" width="${5 * sc}" height="${6 * sc}" fill="#ffd970"/>`;
     x += bw + 4 * sc; i++;
@@ -400,264 +358,301 @@ function townSvg(w, y0, sc = 1) {
 function bgStarsSvg(n, w, h, seed = 3) {
   let o = '', s = seed;
   const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
-  for (let i = 0; i < n; i++) o += `<circle cx="${(rnd() * w).toFixed(0)}" cy="${(rnd() * h).toFixed(0)}" r="${(.8 + rnd() * 1.4).toFixed(1)}" fill="#fff" opacity="${(.4 + rnd() * .6).toFixed(2)}"/>`;
+  for (let i = 0; i < n; i++) o += `<circle cx="${(rnd() * w).toFixed(0)}" cy="${(rnd() * h).toFixed(0)}" r="${(.8 + rnd() * 1.4).toFixed(1)}" fill="#fff" opacity="${(.3 + rnd() * .5).toFixed(2)}"/>`;
   return o;
 }
-
-/* ---------- 1. 남쪽 하늘 ---------- */
-const BODY = { sun: { tr: 740, half: 320 }, moon: { tr: 1430, half: 380 }, star: { tr: 1590, half: 420 } };
-// 해: 7시 뜸 · 12시 20분 남중 · 17시 40분 짐 / 보름달: 17시 30분 뜸 · 23시 50분 남중 / 황소자리: 19시 30분 뜸 · 2시 30분 남중
-function phiOf(t, b) { let d = ((t - b.tr) % 1440 + 1440) % 1440; if (d > 720) d -= 1440; return d / b.half * 90; }
-const arcPos = p => [400 + 360 * Math.sin(rad(p)), 340 - 250 * Math.cos(rad(p))];   // 왼쪽 = 동, 오른쪽 = 서
-$('#bgStars').innerHTML = bgStarsSvg(70, 800, 330);
-$('#cons1').innerHTML = taurus(1.25);
-$('#ghost1').innerHTML = taurus(1.25, { ghost: true });
-$('#town1').innerHTML = townSvg(800, 342) + '<rect x="0" y="340" width="800" height="100" fill="#3d4a63"/><rect id="shade1" x="0" y="250" width="800" height="190" fill="#0b1433" opacity="0"/>';
-const CONS_C = [0, 0];   // 별자리 그룹 가운데 맞춤용
-{ const b = $('#cons1').getBBox(); CONS_C[0] = b.x + b.width / 2; CONS_C[1] = b.y + b.height / 2; }
+// 남쪽 하늘 공통 바탕 (눈금 · 방위)
+function skyBase(id) {
+  const grid = [30, 60, 90].map(a => `<line x1="0" x2="800" y1="${SY(a)}" y2="${SY(a)}" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 9" opacity=".35"/>
+    <text x="8" y="${SY(a) - 6}" font-size="17" fill="#fff" opacity=".7">${a}°${a === 90 ? '(머리 위)' : ''}</text>`).join('');
+  const dirs = [[90, '동'], [135, '남동'], [180, '남'], [225, '남서'], [270, '서']].map(([a, n]) =>
+    `<line x1="${SX(a)}" x2="${SX(a)}" y1="340" y2="350" stroke="#fff" stroke-width="3"/><text x="${SX(a)}" y="374" text-anchor="middle" font-size="${n.length > 1 ? 22 : 28}" fill="#fff" stroke="#2a3352" stroke-width="4" paint-order="stroke">${n}</text>`).join('');
+  return `<defs><linearGradient id="${id}G" x1="0" y1="0" x2="0" y2="1"><stop id="${id}0" offset="0"/><stop id="${id}1" offset="1"/></linearGradient></defs>
+    <rect width="800" height="345" fill="url(#${id}G)"/><g id="${id}Stars">${bgStarsSvg(60, 800, 330, id === 'n' ? 11 : 3)}</g>${grid}
+    <text x="8" y="334" font-size="17" fill="#fff" opacity=".7">0°</text>`
+    + `@@FG@@<g>${townSvg(800, 342, .45)}</g><rect id="${id}Ground" x="0" y="340" width="800" height="100" fill="#3d4a63"/>`
+    + `<rect id="${id}Shade" x="0" y="300" width="800" height="140" fill="#0b1433" opacity="0"/>${dirs}`;
+}
+function pathOf(fn, t0, t1, step = 5) {
+  let d = '';
+  for (let t = t0; t <= t1; t += step) { const [az, alt] = fn(t); if (alt > UP) d += (d ? 'L' : 'M') + SX(az).toFixed(1) + ' ' + SY(Math.max(alt, 0)).toFixed(1); }
+  return d;
+}
 function fmt(t) {
-  const m = t % 1440, h = Math.floor(m / 60), mm = String(m % 60).padStart(2, '0');
+  const m = Math.round(t) % 1440, h = Math.floor(m / 60), mm = String(m % 60).padStart(2, '0');
   const pre = t >= 1440 ? '다음 날 ' : '';
-  const ap = h === 0 ? '밤' : h < 12 ? '오전' : '오후';
+  const ap = h === 0 ? '밤' : h < 6 ? '새벽' : h < 12 ? '오전' : h === 12 ? '낮' : h < 18 ? '오후' : '밤';
   return `${pre}${ap} ${h % 12 || 12}시 ${mm}분`;
 }
-const seen1 = new Set();
-function hit(c) {
-  if (seen1.has(c)) return;
-  seen1.add(c); const el = $(`.chips span[data-c="${c}"]`); el.classList.add('on'); sparkleAt(el); sfx.twinkle();
-  if (seen1.size === 5) setTimeout(() => { say($('#m0'), '해 · 달 · 별 모두 <b>동쪽에서 떠서 남쪽 하늘을 지나 서쪽으로</b> 가요.<br><small>모두 같은 쪽으로 움직여 보이는 까닭은 무엇일까요?</small>', 'good'); done(0); }, 600);
+const crossed = (a, b, k) => Math.min(a, b) <= k && k <= Math.max(a, b);
+
+/* ---------- 1. 해의 길 ---------- */
+$('#daySvg').innerHTML = skyBase('d').replace('@@FG@@', `
+  <path id="dTrail" fill="none" stroke="#fff3b0" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 11"/>
+  <g id="dNoon" opacity="0"><line id="dNoonLine" x1="400" x2="400" y2="340" stroke="#fff" stroke-width="3" stroke-dasharray="6 7"/>
+    <rect x="300" y="40" width="200" height="40" rx="20" fill="#fff"/><text x="400" y="68" text-anchor="middle" font-size="24" fill="#d9771a">남중 · 높이 약 39°</text></g>
+  <g id="dSun"><circle r="62" fill="url(#sunGlow)"/><circle r="22" fill="#ffc83d" stroke="#f5a623" stroke-width="3"/></g>
+  <defs><radialGradient id="sunGlow"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd25a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd25a" stop-opacity="0"/></radialGradient></defs>`)
+  + `<line id="dShadow" x1="400" y1="424" stroke="#1f2a1a" stroke-width="9" stroke-linecap="round" opacity=".55"/>
+  <g id="kid"><rect x="393" y="402" width="14" height="22" rx="6" fill="#4aa3df"/><circle cx="400" cy="394" r="9" fill="#ffd9b0" stroke="#a87b55" stroke-width="2"/></g>`;
+$('#dGround').setAttribute('fill', '#6f8f5a');
+const seen0 = new Set();
+function hit0(c) {
+  if (seen0.has(c)) return;
+  seen0.add(c); const el = $(`#chips0 [data-c="${c}"]`); el.classList.add('on'); sparkleAt(el); sfx.twinkle();
+  if (seen0.size === 3) setTimeout(() => done(0), 400);
 }
-function draw1() {
-  const t = +$('#time').value;
-  $('#now').textContent = fmt(t);
-  const ps = phiOf(t, BODY.sun), pm = phiOf(t, BODY.moon), pc = phiOf(t, BODY.star);
-  const h = Math.cos(rad(ps)), night = nightOf(h), [top, bot] = skyAt(h);
-  $('#sk0').setAttribute('stop-color', top); $('#sk1').setAttribute('stop-color', bot);
-  $('#bgStars').setAttribute('opacity', night);
-  $$('#town1 .win').forEach(w => w.setAttribute('opacity', clamp(night * 1.3)));
-  $('#shade1').setAttribute('opacity', night * .45);
-  const place = (el, p, extra = '') => {
-    const up = Math.abs(p) < 92; el.style.display = up ? '' : 'none';
-    if (up) { const [x, y] = arcPos(p); el.setAttribute('transform', `translate(${x} ${y})${extra}`); }
-    return up;
-  };
-  place($('#sun1'), ps);
-  const moonUp = place($('#moon1'), pm);
-  $('#moon1').setAttribute('opacity', 1 - .45 * clamp((h + .05) / .35));
-  const tilt = ` rotate(${(pc * .3).toFixed(1)}) translate(${-CONS_C[0]} ${-CONS_C[1]})`;
-  const cUp = Math.abs(pc) < 100;
-  [$('#cons1'), $('#ghost1')].forEach(el => { el.style.display = cUp ? '' : 'none'; if (cUp) { const [x, y] = arcPos(pc); el.setAttribute('transform', `translate(${x} ${y})${tilt}`); } });
-  $('#cons1').setAttribute('opacity', night);
-  const ghostOn = cUp && Math.abs(pc) < 88 && night < .5;
-  $('#ghost1').setAttribute('opacity', ghostOn ? .85 * (1 - night * 2) : 0);
-  $('#ghostTxt').setAttribute('opacity', ghostOn ? 1 : 0);
-  if (ghostOn) {
-    const [x, y] = arcPos(pc), gx = clamp(x, 280, 520), gy = clamp(y + 92, 120, 300);
-    const tw = $('#gtTxt').getComputedTextLength() + 36;
-    $('#gtTxt').setAttribute('x', gx); $('#gtTxt').setAttribute('y', gy + 8);
-    $('#gtBox').setAttribute('x', gx - tw / 2); $('#gtBox').setAttribute('y', gy - 22); $('#gtBox').setAttribute('width', tw);
-  }
-  // 남중 표시 (해 또는 달)
-  const sunNoon = Math.abs(t - 740) <= 10, moonNoon = Math.abs(t - 1430) <= 20;
-  $('#noon1').setAttribute('opacity', sunNoon || moonNoon ? 1 : 0);
-  if (sunNoon || moonNoon) {
-    const [, y] = arcPos(sunNoon ? ps : pm);
-    $('#noonLine').setAttribute('y1', y + 30);
-    $('#noonTxt').textContent = sunNoon ? '남중' : '달 남중';
-    $('#noonTxt').setAttribute('fill', sunNoon ? '#d9771a' : '#2c4a8a');
-    $('#noonBox').setAttribute('x', sunNoon ? 356 : 334); $('#noonBox').setAttribute('width', sunNoon ? 88 : 132);
-  }
-  // 안내 글
+let prev0 = 360;
+function draw0() {
+  const t = +$('#t0').value, [az, alt] = SUN(t), h = Math.sin(rad(alt)), night = nightOf(h), [top, bot] = skyAt(h);
+  $('#now0').textContent = fmt(t);
+  $('#d0').setAttribute('stop-color', top); $('#d1').setAttribute('stop-color', bot);
+  $('#dStars').setAttribute('opacity', night);
+  $$('#daySvg .win').forEach(w => w.setAttribute('opacity', clamp(night * 1.3)));
+  $('#dShade').setAttribute('opacity', clamp(-h * 2 + .1) * .5);
+  const up = alt > UP;
+  $('#dSun').style.display = up ? '' : 'none';
+  if (up) $('#dSun').setAttribute('transform', `translate(${SX(az)} ${SY(Math.max(alt, 0))})`);
+  $('#dTrail').setAttribute('d', pathOf(SUN, 415, Math.min(t, 1062), 6));
+  const noon = Math.abs(t - 736) <= 6;
+  $('#dNoon').setAttribute('opacity', noon ? 1 : 0);
+  $('#dNoonLine').setAttribute('y1', SY(alt) + 28);
+  // 그림자 : 해 반대쪽, 해가 높을수록 짧게
+  const sh = $('#dShadow');
+  if (alt > .5) {
+    const L = Math.min(170, 30 / Math.tan(rad(alt))), a = rad(az - 180);
+    sh.setAttribute('x2', 400 - Math.sin(a) * L); sh.setAttribute('y2', 424 + Math.cos(a) * L * .12); sh.style.display = '';
+  } else sh.style.display = 'none';
+  const fix = { 480: [117, 11], 600: [141, 30], 736: [180, 39], 840: [211, 34], 960: [237, 17] }[t] || [Math.round(az), Math.max(0, Math.round(alt))];   // 정각은 교재 계산값 그대로
+  $('#info0').textContent = up ? `해의 방위 ${fix[0]}° (${dirName(fix[0])}) · 높이 약 ${fix[1]}°` : '해가 지평선 아래에 있어요';
+  if (crossed(prev0, t, 415)) hit0('rise');
+  if (crossed(prev0, t, 736) || noon) hit0('noon');
+  if (crossed(prev0, t, 1060)) hit0('set');
+  prev0 = t;
   let m;
-  if (sunNoon) { m = '해가 <b>정남쪽</b>, 하루 중 가장 높은 곳에 왔어요.<br>이것을 <b>남중</b>이라고 해요 <small>낮 12시 20분 무렵</small>'; hit('noon'); }
-  else if (Math.abs(t - 420) <= 15) { m = '해가 <b>동쪽</b> 하늘에서 떠올라요 <small>오전 7시 무렵</small>'; hit('rise'); }
-  else if (Math.abs(t - 1060) <= 15) { m = '해가 <b>서쪽</b> 하늘로 져요 <small>오후 5시 40분 무렵</small>'; hit('set'); }
-  else if (moonNoon) { m = '보름달이 <b>남쪽</b> 하늘 가장 높은 곳에 왔어요 <small>한밤중 무렵</small>'; hit('moon'); }
-  else if (ghostOn) { m = '<b>별은 그대로 있어요 · 햇빛 때문에 안 보여요</b><small>낮에도 별은 하늘에 있지만 햇빛이 너무 밝아요</small>'; hit('ghost'); }
-  else if (Math.abs(t - 1050) <= 40 && moonUp) m = '해 질 무렵, 둥근 보름달이 <b>동쪽</b>에서 떠올라요';
-  else if (h > 0) m = '해는 <b>동쪽 → 남쪽 → 서쪽</b>으로 움직여 보여요';
-  else if (cUp && night > .5) m = '황소자리도 모양은 그대로, <b>동쪽 → 남쪽 → 서쪽</b>으로 움직여요';
-  else m = '달과 별도 <b>동쪽에서 떠서 서쪽으로</b> 움직여 보여요';
-  if (m !== draw1.last) { $('#m0').className = 'msg'; $('#m0').innerHTML = m; draw1.last = m; }
+  if (noon) m = '해가 <b>정남쪽</b>, 하루 중 가장 높은 곳에 왔어요. 이것을 <b>남중</b>이라고 해요.<br><b>해는 한낮에도 머리 바로 위(90°)까지 오지 않아요</b><small>12시 16분 무렵 · 높이 약 39° · 그림자가 가장 짧아요</small>';
+  else if (Math.abs(t - 415) <= 10) m = '해가 <b>동쪽보다 조금 남쪽</b>에서 떠올라요 <small>6시 55분 무렵 · 방위 약 107°</small>';
+  else if (Math.abs(t - 1060) <= 10) m = '해가 <b>서쪽보다 조금 남쪽</b>으로 져요 <small>17시 40분 무렵 · 방위 약 253°</small>';
+  else if (!up) m = t < 600 ? '아직 해가 뜨기 전이에요.<br><small>시간 막대를 오른쪽으로 밀어 보세요</small>' : '해가 졌어요. 지나온 점선을 살펴보세요';
+  else if (t < 736) m = '해가 <b>남동쪽</b> 하늘로 올라가요. 그림자는 해 반대쪽으로 생겨요';
+  else m = '해가 <b>남서쪽</b> 하늘로 내려가요. 그림자가 다시 길어져요';
+  if (m !== draw0.last) { $('#m0').className = 'msg'; $('#m0').innerHTML = m; draw0.last = m; }
 }
-$('#time').addEventListener('input', draw1);
-draw1();
-draw1.last = null; say($('#m0'), '지금은 새벽 6시예요. 서쪽 하늘에 별자리가 보여요.<br><small>시간 막대를 오른쪽으로 밀어 보세요</small>');
+$('#t0').addEventListener('input', draw0);
+draw0();
 
-/* ---------- 2. 내가 돌면 ---------- */
-// 방위각: 위쪽 벽(별자리) = 0, 시계 반대 방향(왼쪽)이 +
-const room = $('#roomSvg'), eye = $('#eyeSvg');
-room.innerHTML = `
-  <rect x="14" y="14" width="332" height="332" rx="10" fill="#1b2140" stroke="#4a5480" stroke-width="8"/>
-  <polygon points="292,288 140,22 220,22" fill="#fff3b0" opacity=".13"/>
-  <rect x="130" y="16" width="100" height="10" rx="4" fill="#fff3b0" opacity=".55"/>
-  <g transform="translate(180 21) scale(.75)">${taurus(.55, { labels: false }).replace(/<text.*?<\/text>/g, '')}</g>
-  <rect x="10" y="140" width="10" height="80" fill="#8a6a3c"/><text x="30" y="186" font-size="15" fill="#c9cfe6">문</text>
-  <rect x="140" y="340" width="80" height="10" fill="#7fb6e0"/><text x="180" y="333" font-size="15" fill="#c9cfe6" text-anchor="middle">창문</text>
-  <rect x="340" y="150" width="10" height="60" fill="#d36b5e"/><text x="332" y="186" font-size="15" fill="#c9cfe6" text-anchor="end">그림</text>
-  <rect x="262" y="270" width="64" height="44" rx="6" fill="#8a6a3c"/>
-  <circle cx="292" cy="288" r="13" fill="#f3f3f3" stroke="#999" stroke-width="2"/><circle cx="292" cy="288" r="5" fill="#fff3b0"/>
-  <text x="294" y="332" font-size="14" fill="#c9cfe6" text-anchor="middle">별 영사기</text>
-  <g id="kid">
-    <path d="M180 180 L94 78 A132 132 0 0 1 266 78 Z" fill="#ffe28a" opacity=".16"/>
-    <circle cx="180" cy="180" r="34" fill="#5a6488" stroke="#8892b8" stroke-width="3"/>
-    <ellipse cx="180" cy="188" rx="24" ry="14" fill="#4aa3df"/>
-    <circle cx="180" cy="176" r="15" fill="#ffd9b0" stroke="#a87b55" stroke-width="2"/>
-    <path d="M180 154 l-7 10 h14 z" fill="#f39c4a"/>
-  </g>
-  <g id="spinArrow" opacity="0"><path d="M124 230 A76 76 0 0 0 236 230" fill="none" stroke="#f39c4a" stroke-width="5" marker-end="url(#ah)"/></g>
-  <defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f39c4a"/></marker></defs>`;
-const OBJ = [
-  { b: 0, svg: `<g transform="translate(-12 -6)">${taurus(1.35)}</g>` },
-  { b: 90, svg: '<rect x="-34" y="-30" width="68" height="160" rx="4" fill="#6b5233"/><circle cx="22" cy="55" r="5" fill="#d9b76a"/><text y="-40" font-size="18" fill="#c9cfe6" text-anchor="middle">문</text>' },
-  { b: 180, svg: '<rect x="-60" y="-50" width="120" height="80" rx="6" fill="#26406a" stroke="#7fb6e0" stroke-width="5"/><line x1="0" y1="-50" x2="0" y2="30" stroke="#7fb6e0" stroke-width="4"/><text y="-60" font-size="18" fill="#c9cfe6" text-anchor="middle">창문</text>' },
-  { b: -90, svg: '<rect x="-40" y="-40" width="80" height="60" fill="#3a2f2a" stroke="#d36b5e" stroke-width="5"/><path d="M-30 12 L-8 -16 L8 4 L18 -8 L32 12z" fill="#7aa86a"/><text y="-50" font-size="18" fill="#c9cfe6" text-anchor="middle">그림</text>' }
+/* ---------- 2. 별의 길 ---------- */
+$('#nightSvg').innerHTML = skyBase('n').replace('@@FG@@', `
+  <path id="trA" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 10"/>
+  <path id="trN" fill="none" stroke="#ff6b5a" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 10"/>
+  <g id="stA"><circle class="core" r="9" fill="#ffffff"/><circle class="ring" r="13" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="4 4"/><text y="-20" text-anchor="middle" font-size="20" fill="#fff" stroke="#14204a" stroke-width="4" paint-order="stroke">알타이르</text></g>
+  <g id="stN"><circle class="core" r="9" fill="#ff5a48"/><circle class="ring" r="13" fill="none" stroke="#ff6b5a" stroke-width="3" stroke-dasharray="4 4"/><text y="-20" text-anchor="middle" font-size="20" fill="#ffd2cc" stroke="#14204a" stroke-width="4" paint-order="stroke">안타레스</text></g>
+  <g id="nGhost" opacity="0"><rect x="160" y="18" width="480" height="44" rx="22" fill="#fff" opacity=".92"/><text x="400" y="48" text-anchor="middle" font-size="22" fill="#2c4a8a">별은 그대로 있어요 · 햇빛 때문에 안 보여요</text></g>`);
+$('#ticks1').innerHTML = [[1050, '17시 30분'], [1260, '21시'], [1440, '0시'], [1620, '3시'], [1800, '6시'], [1980, '9시']]
+  .map(([t, s]) => `<span${t === 1260 || t === 1620 ? ' class="mh"' : ''} style="left:${((t - 1050) / 930 * 100).toFixed(1)}%">${s}</span>`).join('');
+// 2시간마다 표 (파주 계산값)
+const ROWS = [
+  [1200, '20시', [85, 8], [146, 17]],
+  [1320, '22시', [105, 32], [174, 26]],
+  [1440, '0시', [134, 53], [203, 22]],
+  [1560, '2시', [187, 61], [227, 8]],
+  [1680, '4시', [235, 48], null],
+  [1800, '6시', [261, 26], null],
+  [1920, '8시', [279, 3], null]
 ];
-eye.innerHTML = `<rect width="400" height="260" fill="#1b2140"/><rect y="215" width="400" height="45" fill="#2a3052"/>
-  <g id="corners"></g>${OBJ.map((o, i) => `<g class="eobj" id="eo${i}">${o.svg}</g>`).join('')}
-  <text id="eyeHint" x="200" y="248" font-size="18" fill="#ffd28a" text-anchor="middle" opacity="0">별자리가 오른쪽으로 움직여 보여요 →</text>`;
-const PX = 4;   // 1도 = 4칸 (시야 약 ±50도)
-let face = 0, spinning = false, turned = 0, lastT = 0, stillDone = false;
-function draw2() {
-  $('#kid').setAttribute('transform', `rotate(${-face} 180 180)`);
-  OBJ.forEach((o, i) => {
-    const rel = norm(o.b - face), el = $('#eo' + i), x = 200 - rel * PX;
-    el.style.display = Math.abs(rel) < 75 ? '' : 'none';
-    el.setAttribute('transform', `translate(${x} ${i === 0 ? 100 : 90})`);
+$('#tbl tbody').innerHTML = ROWS.map(([, s, a, n]) => {
+  const c = v => v ? `<td>${dirName(v[0])} <small>${v[0]}°</small></td><td>${v[1]}°</td>` : '<td colspan="2"><small>진 뒤</small></td>';
+  return `<tr><td>${s}</td>${c(a)}${c(n)}</tr>`;
+}).join('');
+let airOn = true, done1 = false;
+$('#air').onclick = () => {
+  airOn = !airOn; sfx.pop();
+  $('#air').textContent = airOn ? '대기 끄기' : '대기 켜기';
+  $('#air').classList.toggle('alt', airOn);
+  draw1();
+};
+function draw1() {
+  const t = +$('#t1').value;
+  $('#now1').textContent = fmt(t);
+  const sAlt = SUNJ(t)[1], h = airOn ? Math.sin(rad(sAlt)) : -1, night = nightOf(h), [top, bot] = skyAt(h);
+  $('#n0').setAttribute('stop-color', top); $('#n1').setAttribute('stop-color', bot);
+  $('#nStars').setAttribute('opacity', night);
+  $$('#nightSvg .win').forEach(w => w.setAttribute('opacity', clamp(night * 1.3)));
+  $('#nShade').setAttribute('opacity', night * .45);
+  let ghost = false;
+  [['#stA', '#trA', ALT, 1157], ['#stN', '#trN', ANT, 1074]].forEach(([g, tr, fn, rise]) => {
+    const [az, alt] = fn(t), up = alt > UP, el = $(g);
+    el.style.display = up ? '' : 'none';
+    $(tr).setAttribute('d', pathOf(fn, rise, t, 5));
+    if (!up) return;
+    el.setAttribute('transform', `translate(${SX(az)} ${SY(Math.max(alt, 0))})`);
+    const seen = night > .35;
+    el.querySelector('.core').setAttribute('opacity', seen ? night : 0);
+    el.querySelector('.ring').setAttribute('opacity', seen ? 0 : 1);
+    if (!seen) ghost = true;
   });
-  $('#corners').innerHTML = [45, 135, -45, -135].map(b => { const r = norm(b - face); return Math.abs(r) < 60 ? `<line x1="${200 - r * PX}" x2="${200 - r * PX}" y1="0" y2="215" stroke="#39426d" stroke-width="3"/>` : ''; }).join('');
-}
-function spinLoop(now) {
-  if (!spinning) return;
-  const dt = Math.min(.05, (now - lastT) / 1000); lastT = now;
-  face = (face + 36 * dt) % 360; turned += 36 * dt;
-  $('#eyeHint').setAttribute('opacity', Math.abs(norm(face)) < 60 ? 1 : 0);
-  draw2(); requestAnimationFrame(spinLoop);
-}
-$('#spinL').onclick = () => {
-  sfx.pop(); if (spinning) return;
-  spinning = true; lastT = performance.now(); requestAnimationFrame(spinLoop);
-  $('#spinArrow').setAttribute('opacity', 1);
-  say($('#m1'), '의자가 <b>왼쪽</b>으로 돌아요.<br><small>벽의 별자리는 어느 쪽으로 움직여 보이나요?</small>');
-};
-$('#still').onclick = () => {
-  sfx.pop(); spinning = false; $('#spinArrow').setAttribute('opacity', 0); $('#eyeHint').setAttribute('opacity', 0);
-  if (turned >= 40) {
-    say($('#m1'), '<b>내가 돌면, 가만히 있는 별자리가 반대로 움직여 보여요.</b><small>내가 멈추면 별자리도 멈춰요. 별 영사기는 처음부터 가만히 있었어요</small>', 'good');
-    if (!stillDone) { stillDone = true; done(1); }
-  } else say($('#m1'), '가만히 있으면 별자리도 그대로예요.<br><small>이번엔 <b>왼쪽으로 돌기</b>를 눌러 조금 돌아 보세요</small>', turned ? 'warn' : '');
-};
-draw2();
-
-/* ---------- 3. 지구 위에서 ---------- */
-// θ = 지구가 돈 각도. θ = 0 이면 우리나라가 해를 정면으로 봄(낮 12시)
-const es = $('#earthSvg'), vs = $('#viewSvg');
-const C = 200, R = 80;
-es.innerHTML = `<rect width="400" height="400" fill="#0e1736"/>
-  <g id="world"><g>${bgStarsSvg(60, 400, 400, 11)}</g></g>
-  <g id="sun3"><circle r="34" fill="url(#sunG3)"/><circle r="20" fill="#ffc83d" stroke="#f5a623" stroke-width="3"/></g>
-  <text id="sunL" font-size="15" fill="#ffd25a" text-anchor="middle">태양</text>
-  <g id="moon3"><circle r="11" fill="#f7e08a"/></g><text id="moonL" font-size="14" fill="#f7e08a" text-anchor="middle">보름달</text>
-  <g id="cons3"></g>
-  <g id="earth3">
-    <circle cx="${C}" cy="${C}" r="${R}" fill="#3a8fd6"/>
-    <path d="M${C + 20} ${C - 62} q22 10 30 30 q-14 14 -4 30 q-26 6 -34 -14 q-10 -22 8 -46z" fill="#6fb86a"/>
-    <path d="M${C - 52} ${C - 30} q20 -10 34 6 q-4 22 -24 26 q-16 -8 -10 -32z" fill="#6fb86a"/>
-    <path d="M${C - 30} ${C + 30} q24 0 30 22 q-18 18 -40 6 q-6 -16 10 -28z" fill="#6fb86a"/>
-    <path d="M${C + 60} ${C - 12} q12 4 12 14 q-8 8 -14 -2z" fill="#86c97a" stroke="#fff" stroke-width="1.5"/>
-  </g>
-  <g id="nightSide"><path d="M${C} ${C - R} A${R} ${R} 0 0 0 ${C} ${C + R} Z" fill="#050a1e" opacity=".6"/></g>
-  <circle cx="${C}" cy="${C}" r="4" fill="#fff"/><text x="${C}" y="${C + 18}" font-size="13" fill="#fff" text-anchor="middle">북극</text>
-  <g id="kid3"><line x1="${C + R - 2}" y1="${C}" x2="${C + R + 16}" y2="${C}" stroke="#ff8a3d" stroke-width="4" stroke-linecap="round"/><circle cx="${C + R + 20}" cy="${C}" r="5" fill="#ff8a3d"/></g>
-  <text id="eL" font-size="14" fill="#ffd28a" text-anchor="middle">동</text><text id="wL" font-size="14" fill="#9fb8ff" text-anchor="middle">서</text>
-  <g id="arEarth"><path d="M${C + 95 * Math.cos(rad(-20))} ${C - 95 * Math.sin(rad(-20))} A95 95 0 0 0 ${C + 95 * Math.cos(rad(40))} ${C - 95 * Math.sin(rad(40))}" fill="none" stroke="#7fd0ff" stroke-width="4" marker-end="url(#ah3)"/></g>
-  <g id="arSky" opacity="0"><path d="M${C + 150 * Math.cos(rad(115))} ${C - 150 * Math.sin(rad(115))} A150 150 0 0 1 ${C + 150 * Math.cos(rad(65))} ${C - 150 * Math.sin(rad(65))}" fill="none" stroke="#ffd28a" stroke-width="4" marker-end="url(#ah4)"/></g>
-  <text id="arTxt" x="200" y="24" font-size="16" fill="#7fd0ff" text-anchor="middle">지구 자전 : 서쪽 → 동쪽 (시계 반대 방향)</text>
-  <defs>
-    <radialGradient id="sunG3"><stop offset=".4" stop-color="#ffd25a" stop-opacity=".6"/><stop offset="1" stop-color="#ffd25a" stop-opacity="0"/></radialGradient>
-    <marker id="ah3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7fd0ff"/></marker>
-    <marker id="ah4" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ffd28a"/></marker>
-  </defs>`;
-$('#cons3').innerHTML = `<g transform="scale(.42) translate(-60 -30)">${taurus(1, { labels: false })}</g>`;
-vs.innerHTML = `<defs><linearGradient id="skyG3" x1="0" y1="0" x2="0" y2="1"><stop id="v0" offset="0"/><stop id="v1" offset="1"/></linearGradient></defs>
-  <rect width="400" height="215" fill="url(#skyG3)"/><g id="vStars">${bgStarsSvg(40, 400, 200, 7)}</g>
-  <g id="vCons"><g transform="translate(-55 -32) scale(.8)">${taurus(1)}</g></g>
-  <g id="vMoon"><circle r="13" fill="#f7e08a" stroke="#e8cb5e" stroke-width="2"/></g>
-  <g id="vSun"><circle r="34" fill="url(#sunG)"/><circle r="15" fill="#ffc83d" stroke="#f5a623" stroke-width="2"/></g>
-  <g id="vTown">${townSvg(400, 212, .6)}</g><rect y="210" width="400" height="50" fill="#3d4a63"/>
-  <text x="22" y="246" font-size="24" fill="#fff" text-anchor="middle">동</text><text x="200" y="246" font-size="24" fill="#fff" text-anchor="middle">남</text><text x="378" y="246" font-size="24" fill="#fff" text-anchor="middle">서</text>`;
-const BEAR = { sun: 0, moon: 180, star: 217 };   // 해 · 보름달(해 반대편) · 황소자리 (지구에서 본 방향)
-let theta = -90, mode = 'earth', playing = false, lastT3 = 0, rot = { earth: 0, sky: 0 }, done3 = false, hint3 = '';
-const polar = (a, r) => [C + r * Math.cos(rad(a)), C - r * Math.sin(rad(a))];
-function draw3() {
-  const e = mode === 'earth' ? theta : 90, w = mode === 'earth' ? 0 : 90 - theta;
-  const setT = (id, a, r) => { const [x, y] = polar(a, r); $(id).setAttribute('transform', `translate(${x} ${y})`); return [x, y]; };
-  const [sx, sy] = setT('#sun3', BEAR.sun + w, 160);
-  $('#sunL').setAttribute('x', sx); $('#sunL').setAttribute('y', sy + 38);
-  const [mx, my] = setT('#moon3', BEAR.moon + w, 125);
-  $('#moonL').setAttribute('x', mx); $('#moonL').setAttribute('y', my + 26);
-  setT('#cons3', BEAR.star + w, 165);
-  $('#world').setAttribute('transform', `rotate(${-w} ${C} ${C})`);
-  $('#nightSide').setAttribute('transform', `rotate(${-w} ${C} ${C})`);
-  $('#earth3').setAttribute('transform', `rotate(${-e} ${C} ${C})`);
-  $('#kid3').setAttribute('transform', `rotate(${-e} ${C} ${C})`);
-  const [ex, ey] = polar(e + 14, R + 30), [wx, wy] = polar(e - 14, R + 30);
-  $('#eL').setAttribute('x', ex); $('#eL').setAttribute('y', ey + 5); $('#wL').setAttribute('x', wx); $('#wL').setAttribute('y', wy + 5);
-  // 친구가 보는 하늘: rel = 머리 위에서 잰 각도, + 쪽이 동쪽(왼쪽)
-  const rel = k => rad(norm(BEAR[k] + w - e));
-  const vpos = (id, a) => { const up = Math.cos(a) > -.08; $(id).style.display = up ? '' : 'none'; if (up) $(id).setAttribute('transform', `translate(${200 - 175 * Math.sin(a)} ${212 - 165 * Math.cos(a)})`); };
-  const h = Math.cos(rel('sun')), night = nightOf(h), [top, bot] = skyAt(h);
-  $('#v0').setAttribute('stop-color', top); $('#v1').setAttribute('stop-color', bot);
-  $('#vStars').setAttribute('opacity', night); $('#vCons').setAttribute('opacity', night);
-  $$('#vTown .win').forEach(x => x.setAttribute('opacity', clamp(night * 1.3)));
-  vpos('#vSun', rel('sun')); vpos('#vMoon', rel('moon')); vpos('#vCons', rel('star'));
-  const hr = ((12 + theta / 15) % 24 + 24) % 24, H = Math.floor(hr);
-  $('#clock3').textContent = `우리나라 시각 약 ${H === 0 ? '밤' : H < 12 ? '오전' : '오후'} ${H % 12 || 12}시`;
-}
-function loop3(now) {
-  if (!playing) return;
-  const dt = Math.min(.05, (now - lastT3) / 1000); lastT3 = now;
-  const d = 15 * +$('#speed').value * dt;   // 빠르기 1 = 하루 24초
-  theta += d; rot[mode] += d; draw3(); check3();
-  requestAnimationFrame(loop3);
-}
-function check3() {
-  if (done3) return;
-  let m = '';
-  if (rot.earth >= 360 && rot.sky >= 360) {
-    done3 = true; playing = false; $('#play').textContent = '▶ 돌리기';
-    say($('#m2'), '두 모습 모두 친구 눈에는 똑같이 보여요.<br><b>해 · 달 · 별이 동쪽에서 서쪽으로 가 보이는 까닭은 지구가 서쪽에서 동쪽으로 자전하기 때문이에요.</b>', 'good');
-    done(2); return;
+  $('#nGhost').setAttribute('opacity', ghost ? 1 : 0);
+  $$('#tbl tbody tr').forEach((r, i) => { const on = t >= ROWS[i][0]; if (on && !r.classList.contains('on')) sfx.twinkle(); r.classList.toggle('on', on); });
+  let m;
+  if (t >= 1920) {
+    m = '<b>높이는 달라도 두 별 모두 동쪽 → 남쪽 → 서쪽으로 움직여요</b><small>알타이르는 높게(61°), 안타레스는 낮게(26°) 남쪽 하늘을 지나요</small>';
+    if (!done1) { done1 = true; done(1); }
   }
-  if (rot[mode] >= 360) m = mode === 'earth' ? '하루가 지났어요! 이번엔 <b>✨ 하늘이 돈다</b>를 눌러 견주어 보세요' : '이번엔 <b>🌏 지구가 돈다</b>로 바꿔 하루를 돌려 보세요';
-  else if (rot[mode] > 30) m = '친구 눈에는 해 · 달 · 별이 <b>동쪽(왼쪽)에서 서쪽(오른쪽)</b>으로 가요<small>하루가 다 지나도록 돌려 보세요</small>';
-  if (m && m !== hint3) { hint3 = m; say($('#m2'), m, rot[mode] >= 360 ? 'good' : ''); if (rot[mode] >= 360) sfx.twinkle(); }
+  else if (ghost) m = '<b>별은 그대로 있어요 · 햇빛 때문에 안 보여요</b><small>대기 끄기를 눌러 보세요</small>';
+  else if (Math.abs(t - 1345) <= 10) m = '안타레스가 <b>남쪽</b> 하늘에서 가장 높아요. 높이 약 26°, 낮게 지나가요 <small>22시 25분 무렵 남중</small>';
+  else if (Math.abs(t - 1546) <= 10) m = '알타이르가 <b>남쪽</b> 하늘에서 가장 높아요. 높이 약 61°, 높게 지나가요 <small>1시 46분 무렵 남중</small>';
+  else if (t < 1157) m = '안타레스는 <b>남동쪽</b>에서 떠요. 알타이르는 아직 지평선 아래예요';
+  else if (t < 1180) m = '알타이르가 <b>동쪽보다 조금 북쪽</b>에서 떠올라요 <small>19시 17분 무렵 · 방위 79°</small>';
+  else m = '두 별이 어느 쪽으로 움직이는지 살펴보세요<small>표가 2시간마다 저절로 채워져요</small>';
+  if (m !== draw1.last) { $('#m1').className = 'msg' + (t >= 1920 ? ' good' : ''); $('#m1').innerHTML = m; draw1.last = m; }
 }
-$('#play').onclick = () => {
-  sfx.pop(); playing = !playing;
-  $('#play').textContent = playing ? '⏸ 멈추기' : '▶ 돌리기';
-  if (playing) { lastT3 = performance.now(); requestAnimationFrame(loop3); }
-};
-$$('#mode button').forEach(b => b.onclick = () => {
-  if (b.dataset.m === mode) return;
-  mode = b.dataset.m; sfx.pop();
-  $$('#mode button').forEach(x => x.classList.toggle('on', x === b));
-  $('#arEarth').setAttribute('opacity', mode === 'earth' ? 1 : 0);
-  $('#arSky').setAttribute('opacity', mode === 'sky' ? 1 : 0);
-  $('#arTxt').textContent = mode === 'earth' ? '지구 자전 : 서쪽 → 동쪽 (시계 반대 방향)' : '지구는 멈추고 하늘이 시계 방향으로 돈다면?';
-  $('#arTxt').setAttribute('fill', mode === 'earth' ? '#7fd0ff' : '#ffd28a');
-  draw3(); if (!done3) { hint3 = ''; say($('#m2'), mode === 'sky' ? '이번엔 지구가 멈추고 <b>하늘이 돈다</b>고 해 봐요.<br><small>친구가 보는 하늘은 어떻게 달라질까요?</small>' : '다시 <b>지구가 돈다</b>로 돌아왔어요.<br><small>친구가 보는 하늘을 견주어 보세요</small>'); }
+$('#t1').addEventListener('input', draw1);
+draw1();
+
+/* ---------- 3. 투명 반구 ---------- */
+// 북쪽에서 남쪽을 내려다본 모습 : 왼쪽 = 동, 먼 쪽 = 남, 가까운 쪽 = 북
+const DC = { x: 300, y: 222 }, CM = 24, RD = 6, EL = rad(18), KK = Math.sin(EL), CC = Math.cos(EL);
+function P(az, alt, r = RD) {
+  const g = r * Math.cos(rad(alt)), z = r * Math.sin(rad(alt));
+  return [DC.x - g * CM * Math.sin(rad(az)), DC.y + g * CM * Math.cos(rad(az)) * KK - z * CM * CC];
+}
+const pt = ([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`;
+const TS = { 8: [117, 11, 10], 10: [141, 30, 3.5], 12: [180, 39, 2.5], 14: [211, 34, 3.0], 16: [237, 17, 6.5] };   // 방위 · 높이 · 그림자(cm, 막대 2cm)
+const dome = $('#domeSvg');
+{
+  const corners = [[-11, -7.5], [11, -7.5], [11, 7.5], [-11, 7.5]].map(([e, n]) => pt([DC.x - e * CM, DC.y + n * CM * KK])).join(' ');
+  const ell = r => `<ellipse cx="${DC.x}" cy="${DC.y}" rx="${r * CM}" ry="${r * CM * KK}" fill="none" stroke="#9aa6c4" stroke-width="2"/>`;
+  let lines = '';
+  for (let i = 0; i < 16; i++) { const [x, y] = P(i * 22.5, 0, 5.4); lines += `<line x1="${DC.x}" y1="${DC.y}" x2="${x}" y2="${y}" stroke="#c9d1e4" stroke-width="${i % 4 ? 1.2 : 2.2}"/>`; }
+  const lab = [[90, '동'], [180, '남'], [270, '서'], [0, '북']].map(([a, n]) => { const [x, y] = P(a, 0, a % 180 ? 7.2 : 7.3); return `<text x="${a === 180 ? x + 26 : x}" y="${y + 9}" text-anchor="middle" font-size="24" fill="#2c4a8a">${n}</text>`; }).join('');
+  const rl = [2, 3, 4].map(r => r === 3 ? `<text x="${DC.x - r * CM + 3}" y="${DC.y - 5}" font-size="13" fill="#7c86a3">3cm</text>` : `<text x="${DC.x + r * CM - 3}" y="${DC.y - 5}" text-anchor="end" font-size="13" fill="#7c86a3">${r}cm</text>`).join('');
+  let top = '';   // 반구 윤곽 : 위 반원 + 바닥 타원 앞쪽
+  dome.innerHTML = `
+    <defs><radialGradient id="glass" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff" stop-opacity=".75"/><stop offset=".6" stop-color="#cfe8fb" stop-opacity=".28"/><stop offset="1" stop-color="#8cc4ee" stop-opacity=".35"/></radialGradient></defs>
+    <rect width="600" height="350" fill="#f4f6fa"/>
+    <polygon points="${corners}" fill="#fffdf6" stroke="#d8dbe4" stroke-width="2"/>
+    ${lines}${ell(2)}${ell(3)}${ell(4)}${rl}${lab}
+    <circle cx="${DC.x}" cy="${DC.y}" r="4" fill="#2b3242"/>
+    <g id="dmPath"></g><g id="dmShadow"></g>
+    <path d="M${DC.x - RD * CM} ${DC.y} A${RD * CM} ${RD * CM} 0 0 1 ${DC.x + RD * CM} ${DC.y} A${RD * CM} ${RD * CM * KK} 0 0 1 ${DC.x - RD * CM} ${DC.y}Z" fill="url(#glass)" stroke="#7fb6e0" stroke-width="3"/>
+    <path d="M${pt(P(90, 0))} ${[...Array(19)].map((_, i) => 'L' + pt(P(90 + (i < 10 ? 0 : 180), i < 10 ? i * 10 : 180 - i * 10))).join('')}" fill="none" stroke="#7fb6e0" stroke-width="1.5" stroke-dasharray="4 6" opacity=".7"/>
+    <line x1="${DC.x}" y1="${DC.y}" x2="${DC.x}" y2="${DC.y - 2 * CM * CC}" stroke="#8a5a2b" stroke-width="5" stroke-linecap="round"/>
+    <g id="dmStars"></g><g id="dmStk"></g>
+    <g id="ruler" opacity="0"><path id="rulerArc" fill="none" stroke="#ff8a3d" stroke-width="12" stroke-linecap="round" opacity=".45"/><g id="rulerTicks"></g></g>
+    <text id="readout" x="300" y="30" text-anchor="middle" font-size="22" fill="#d9771a"></text>
+    <g id="tray"><rect x="490" y="14" width="96" height="104" rx="18" fill="#fff" stroke="#e3e8f0" stroke-width="3"/><text x="538" y="108" text-anchor="middle" font-size="15" fill="#6b7385">노란 스티커</text></g>
+    <g id="stk" style="cursor:grab"><circle r="34" fill="transparent"/><circle r="15" fill="#ffd23d" stroke="#e0a800" stroke-width="3"/></g>`;
+}
+const TRAY = [538, 58];
+let selT = null, dragging = false, onDome = null;
+const placed = {};
+function setStk([x, y]) { $('#stk').setAttribute('transform', `translate(${x} ${y})`); }
+setStk(TRAY);
+$('#tbtns').innerHTML = [8, 10, 12, 14, 16].map(h => `<button data-h="${h}">${h}시</button>`).join('');
+$$('#tbtns button').forEach(b => b.onclick = () => {
+  selT = +b.dataset.h; sfx.pop();
+  $$('#tbtns button').forEach(x => x.classList.toggle('on', x === b));
+  const [az, alt] = TS[selT];
+  $('#tcard').innerHTML = placed[selT] ? `${selT}시 스티커는 이미 붙였어요 ✓<small>다른 시각을 골라 보세요</small>`
+    : `${selT}시${selT === 12 ? ' (12시 16분 남중)' : ''} 해 : 방위 <b>${az}° (${dirName(az)})</b> · 높이 <b>${alt}°</b><small>스티커를 끌면 높이 자가 따라와요. 숫자를 맞춰 놓아 보세요</small>`;
 });
-$('#speed').oninput = () => sfx.pop();
-draw3();
+function svgPt(e) { const p = dome.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(dome.getScreenCTM().inverse()); }
+function onSphere(x, y) {   // 화면 점 → 투명 반구 뒤쪽(남쪽) 면의 방위 · 높이
+  let X = (x - DC.x) / CM, Y = (DC.y - y) / CM, q = Math.hypot(X, Y);
+  if (q > RD + 1) return null;
+  if (q > RD) { X *= RD / q; Y *= RD / q; q = RD; }
+  const tt = Math.sqrt(Math.max(0, RD * RD - q * q));
+  for (const t of [tt, -tt]) {   // 먼 면 먼저, 바닥 아래면 앞면
+    const e = -X, n = -Y * KK - t * CC, z = Y * CC - t * KK;
+    if (z >= -0.05) return [Math.round(((deg(Math.atan2(e, n)) % 360) + 360) % 360), Math.round(deg(Math.asin(clamp(z / RD, 0, 1))))];
+  }
+  return null;
+}
+function showRuler(az) {
+  let d = '', tk = '';
+  for (let a = 0; a <= 90; a += 2) d += (a ? 'L' : 'M') + pt(P(az, a, RD + .05));
+  for (let a = 0; a <= 90; a += 10) {
+    const [x, y] = P(az, a, RD + .05), [x2, y2] = P(az, a, RD + .55);
+    tk += `<line x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="#d9771a" stroke-width="2.5"/>`;
+    if (a % 30 === 0) { const [x3, y3] = P(az, a, RD + 1.15); tk += `<text x="${x3}" y="${y3 + 5}" text-anchor="middle" font-size="14" fill="#d9771a">${a}</text>`; }
+  }
+  $('#rulerArc').setAttribute('d', d); $('#rulerTicks').innerHTML = tk; $('#ruler').setAttribute('opacity', 1);
+}
+function hideRuler() { $('#ruler').setAttribute('opacity', 0); $('#readout').textContent = ''; }
+$('#stk').addEventListener('pointerdown', e => {
+  e.preventDefault(); dragging = true; $('#stk').setPointerCapture(e.pointerId); sfx.pop();
+});
+$('#stk').addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const p = svgPt(e); setStk([p.x, p.y]);
+  onDome = onSphere(p.x, p.y);
+  if (onDome) { showRuler(onDome[0]); $('#readout').textContent = `방위 ${onDome[0]}° (${dirName(onDome[0])}) · 높이 ${onDome[1]}°`; }
+  else hideRuler();
+});
+function dropStk() {
+  if (!dragging) return;
+  dragging = false; hideRuler();
+  const back = () => setStk(TRAY);
+  if (!onDome) { back(); return; }
+  if (!selT) { back(); say($('#m2'), '먼저 <b>시각</b> 단추를 골라요', 'warn'); sfx.boing(); return; }
+  if (placed[selT]) { back(); say($('#m2'), `${selT}시 스티커는 이미 붙였어요. 다른 시각을 골라요`, 'warn'); return; }
+  const [az, alt, L] = TS[selT], [daz, dalt] = [onDome[0] - az, onDome[1] - alt];
+  onDome = null;
+  if (Math.abs(daz) > 10 || Math.abs(dalt) > 6) {
+    back(); sfx.boing();
+    const tips = [];
+    if (Math.abs(daz) > 10) tips.push(daz < 0 ? '조금 더 <b>서쪽(오른쪽)</b>으로' : '조금 더 <b>동쪽(왼쪽)</b>으로');
+    if (Math.abs(dalt) > 6) tips.push(dalt < 0 ? '조금 더 <b>높이</b>' : '조금 더 <b>낮게</b>');
+    say($('#m2'), `${tips.join(', ')} 붙여 보세요<small>${selT}시 해 : 방위 ${az}° · 높이 ${alt}°</small>`, 'warn');
+    return;
+  }
+  placed[selT] = true; back();
+  const [x, y] = P(az, alt);
+  $('#dmStk').insertAdjacentHTML('beforeend', `<g><circle cx="${x}" cy="${y}" r="13" fill="#ffd23d" stroke="#e0a800" stroke-width="3"/><text x="${x}" y="${y - 19}" text-anchor="middle" font-size="16" fill="#8a6500" stroke="#fff" stroke-width="4" paint-order="stroke">${selT}시</text></g>`);
+  // 막대 그림자 : 해 반대쪽
+  const sa = rad(az + 180), tx = DC.x - L * CM * Math.sin(sa), ty = DC.y + L * CM * Math.cos(sa) * KK;
+  $$('#dmShadow .last').forEach(g => g.classList.remove('last'));
+  $$('#dmShadow text').forEach(t => t.remove());
+  $('#dmShadow').insertAdjacentHTML('beforeend', `<line class="last" x1="${DC.x}" y1="${DC.y}" x2="${tx}" y2="${ty}" stroke="#4b4f5c" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+    <text x="${tx}" y="${ty + (ty > DC.y ? 22 : -10)}" text-anchor="middle" font-size="16" fill="#4b4f5c" stroke="#fffdf6" stroke-width="4" paint-order="stroke">${selT}시 그림자 ${L}cm</text>`);
+  sfx.good(); sparkleAt($(`#tbtns [data-h="${selT}"]`));
+  $(`#tbtns [data-h="${selT}"]`).classList.add('ok');
+  const n = Object.keys(placed).length;
+  if (n === 5) {
+    $('#dmPath').innerHTML = `<path d="M${[...Array(65)].map((_, i) => pt(P(...SUN(415 + i * 10)))).join('L')}" fill="none" stroke="#f39c4a" stroke-width="4" stroke-dasharray="8 7"/>`;
+    const tag = (x, y, s) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="18" fill="#c4621a" stroke="#fff" stroke-width="4" paint-order="stroke">${s}</text>`;
+    $('#dmPath').insertAdjacentHTML('beforeend', tag(92, 150, '동쪽 낮게') + tag(300, 48, '남쪽 가장 높게') + tag(508, 150, '서쪽 낮게'));
+    $('#tcard').innerHTML = '<b>동쪽 낮게 → 남쪽 가장 높게 → 서쪽 낮게</b><small>해가 높을수록 그림자는 짧아요 (12시 2.5cm)</small>';
+    say($('#m2'), '해는 <b>동쪽 낮게 → 남쪽 가장 높게 → 서쪽 낮게</b> 지나가요.<br><small>⭐ 별 스티커를 눌러 별의 길도 붙여 보세요</small>', 'good');
+    $('#starBtn').classList.remove('off');
+    done(2);
+  } else say($('#m2'), `딱 맞았어요! 막대 그림자는 해 <b>반대쪽</b>으로 ${L}cm 생겨요<small>남은 스티커 ${5 - n}장</small>`, 'good');
+}
+$('#stk').addEventListener('pointerup', dropStk);
+$('#stk').addEventListener('pointercancel', dropStk);
+let starsOn = false;
+$('#starBtn').onclick = () => {
+  sfx.pop(); starsOn = !starsOn;
+  if (!starsOn) { $('#dmStars').innerHTML = ''; $('#starBtn').textContent = '⭐ 별 스티커'; return; }
+  const one = (fn, t0, t1, fill, stroke, name, la) => {
+    let d = '', dots = '';
+    for (let t = t0; t <= t1; t += 10) { const p = P(...fn(t).map((v, i) => i ? Math.max(0, v) : v)); d += (d ? 'L' : 'M') + pt(p); }
+    for (let t = Math.ceil(t0 / 60) * 60; t <= t1; t += 120) { const [x, y] = P(...fn(t)); dots += `<circle cx="${x}" cy="${y}" r="8" fill="${fill}" stroke="#fff" stroke-width="2"/>`; }
+    return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="3.5" stroke-dasharray="6 6"/>${dots}<circle cx="24" cy="${la}" r="8" fill="${fill}"/><text x="38" y="${la + 6}" font-size="17" fill="${stroke}">${name}</text>`;
+  };
+  $('#dmStars').innerHTML = one(ALT, 1157, 1936, '#3a7be0', '#2a62c4', '알타이르 : 높게 (61°)', 300) + one(ANT, 1074, 1618, '#ef4b3c', '#d23a2c', '안타레스 : 낮게 (26°)', 328);
+  $('#starBtn').textContent = '⭐ 별 스티커 숨기기';
+  sfx.twinkle();
+  say($('#m2'), '별도 <b>동쪽에서 떠서 남쪽 하늘을 지나 서쪽으로</b> 져요.<br><small>알타이르(파랑)는 높게, 안타레스(빨강)는 낮게 지나가요</small>', 'good');
+};
 
 /* ---------- 4. OX 퀴즈 ---------- */
 const QS = [
-  { q: '보는 사람이 돌면 가만히 있는 별자리가 반대쪽으로 움직여 보인다.', a: 'O', why: '의자에 앉아 왼쪽으로 돌면 벽의 별자리는 오른쪽으로 움직여 보여요.' },
-  { q: '태양은 정남쪽에 왔을 때 하루 중 가장 높다.', a: 'O', why: '태양이 정남쪽에 와서 가장 높아지는 것을 남중이라고 해요. 낮 12시 20분 무렵이에요.' },
-  { q: '보름달은 해 질 무렵 동쪽 하늘에서 떠오른다.', a: 'O', why: '보름달은 해 질 무렵 동쪽에서 떠서 한밤중에 남쪽 하늘 가장 높이 떠요.' },
-  { q: '태양은 서쪽에서 떠서 동쪽으로 진다.', a: 'X', why: '태양은 동쪽에서 떠서 남쪽 하늘을 지나 서쪽으로 져요.' },
-  { q: '지구는 서쪽에서 동쪽으로 자전한다.', a: 'O', why: '그래서 해 · 달 · 별이 동쪽에서 서쪽으로 움직여 보여요.' }
+  { q: '해는 한낮에 머리 바로 위(90°)를 지난다.', a: 'X', why: '파주에서 10월 말 해의 남중 높이는 약 39°예요. 머리 바로 위까지 오지 않아요.' },
+  { q: '남쪽을 보고 서면 왼쪽이 동쪽이다.', a: 'O', why: '남쪽을 보고 서면 왼쪽이 동쪽, 오른쪽이 서쪽이에요.' },
+  { q: '해가 남중할 때 그림자가 가장 짧다.', a: 'O', why: '해가 가장 높이 뜨는 남중 때 그림자가 가장 짧아요. (2cm 막대 → 약 2.5cm)' },
+  { q: '별은 서쪽에서 떠서 동쪽으로 진다.', a: 'X', why: '별도 해처럼 동쪽에서 떠서 남쪽 하늘을 지나 서쪽으로 져요.' },
+  { q: '알타이르와 안타레스는 높이는 달라도 같은 방향으로 움직인다.', a: 'O', why: '알타이르는 높게, 안타레스는 낮게 지나가지만 둘 다 동쪽 → 남쪽 → 서쪽이에요.' }
 ];
 let qi = 0, score = 0;
 function showQ() {
@@ -675,7 +670,7 @@ $$('.ox button').forEach(b => b.onclick = () => {
 function nextHandler() {
   sfx.pop();
   if (qi < QS.length - 1) { qi++; showQ(); return; }
-  if (score === QS.length) { say($('#m3'), `${QS.length}문제를 모두 맞혔어요.<br><b>하루 하늘의 비밀을 정확히 이해했어요</b>`, 'good'); done(3); }
+  if (score === QS.length) { say($('#m3'), `${QS.length}문제를 모두 맞혔어요.<br><b>하루 하늘 길을 정확히 이해했어요</b>`, 'good'); done(3); }
   else say($('#m3'), `${QS.length}문제 중 <b>${score}개</b> 맞혔어요!<br><small>틀린 문제를 다시 보면 모두 맞힐 수 있어요</small>`);
   $('#qtext').textContent = '수고했어요!'; $$('.ox button').forEach(x => x.disabled = true);
   $('#next').textContent = '다시 풀기 ↺';
